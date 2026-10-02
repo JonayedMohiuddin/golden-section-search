@@ -22,5 +22,7 @@
   \fill[GSGold] (3.82,-0.25) circle (2.4pt);
   \draw[-{Latex[length=2.4mm]},GSGold,line width=1.1pt]
     (3.82,1.23) -- node[right,font=\small,align=left] {same point,\\same value} (3.82,0.06);
-  \node[GSCoral,font=\small,anchor=west] at (2.55,-0.92) {one new call};
+  \node[GSCoral,font=\small,anchor=east] at (2.16,0.34) {one new call};
+  \draw[-{Latex[length=2.2mm]},GSCoral,line width=1pt]
+    (2.20,0.24) -- (2.34,-0.10);
 \end{tikzpicture}
