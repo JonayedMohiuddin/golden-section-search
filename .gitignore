@@ -1,1 +1,17 @@
-.local
+# LaTeX build products
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+
+# Local planning/course material supplied outside the submission
+.local/
+
+# Generated submission archive (built only at the final stage)
+2105060_LaTeX_Source.zip
