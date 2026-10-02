@@ -498,6 +498,250 @@
 \section{Mathematical Problems}
 % Five problems; each problem frame is immediately followed by its solution.
 
+% -----------------------------------------------------------------------------
+% Pure mathematical problem 1
+% -----------------------------------------------------------------------------
+\begin{frame}{Problem 1: Golden ratio}
+  Normalize a search bracket to \([0,1]\). Place the two probes at
+  \[
+    x_1=1-\tau, \qquad x_2=\tau,
+    \qquad \frac12<\tau<1.
+  \]
+
+  Suppose the right-hand bracket \([x_1,1]\) survives. Choose \(\tau\) so
+  that the old point \(x_2\) is exactly the left probe of the new bracket.
+
+  \begin{enumerate}
+    \item Form the self-similarity equation for \(\tau\).
+    \item Solve it and reject the inadmissible root.
+    \item State the fraction of length removed by one reduction.
+  \end{enumerate}
+
+  \muted{No decimal approximation is needed until the last line.}
+\end{frame}
+
+\begin{frame}{Solution 1: Derivation}
+  The surviving bracket has lower end \(1-\tau\) and length \(\tau\).
+  Its left probe is therefore
+  \[
+    (1-\tau)+(1-\tau)\tau=1-\tau^2.
+  \]
+  Requiring this to coincide with the old point \(x_2=\tau\) gives
+  \[
+    1-\tau^2=\tau
+    \quad\Longleftrightarrow\quad
+    \tau^2+\tau-1=0.
+  \]
+
+  Hence
+  \[
+    \tau=\frac{-1\pm\sqrt5}{2}.
+  \]
+  The negative root is outside \((1/2,1)\), so
+  \[
+    \boxed{\tau=\frac{\sqrt5-1}{2}\approx0.618034}.
+  \]
+
+  The retained fraction is \(\tau\); the discarded fraction is
+  \(1-\tau=\tau^2\approx0.381966\).
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Pure mathematical problem 2
+% -----------------------------------------------------------------------------
+\begin{frame}{Problem 2: Hand trace}
+  Use golden-section search to minimize
+  \[
+    f(x)=(x-1.3)^2+2, \qquad 0\le x\le4.
+  \]
+
+  With \(\tau=(\sqrt5-1)/2\), carry out the first \textbf{four} bracket
+  reductions. At each step, show
+  \[
+    x_1=x_U-\tau(x_U-x_L),
+    \qquad
+    x_2=x_L+\tau(x_U-x_L),
+  \]
+  the two function values, and the retained bracket.
+
+  Finally, report the midpoint estimate and the number of function
+  evaluations used.
+\end{frame}
+
+\begin{frame}{Solution 2: Trace table}
+  For minimization, \(f(x_1)<f(x_2)\) keeps \([x_L,x_2]\); otherwise it keeps
+  \([x_1,x_U]\).
+
+  \vspace{0.10cm}
+  {\centering
+  \fontsize{12.5}{15}\selectfont
+  \setlength{\tabcolsep}{3.5pt}
+  \begin{tabular}{c r r r r l}
+    \toprule
+    \(k\) & \(x_1\) & \(x_2\) & \(f(x_1)\) & \(f(x_2)\) & retained bracket \\
+    \midrule
+    1 & 1.5279 & 2.4721 & 2.0519 & 3.3739 & \([0,\,2.4721]\) \\
+    2 & 0.9443 & 1.5279 & 2.1265 & 2.0519 & \([0.9443,\,2.4721]\) \\
+    3 & 1.5279 & 1.8885 & 2.0519 & 2.3464 & \([0.9443,\,1.8885]\) \\
+    4 & 1.3050 & 1.5279 & 2.0000 & 2.0519 & \([0.9443,\,1.5279]\) \\
+    \bottomrule
+  \end{tabular}\par}
+
+  \vspace{0.18cm}
+  Thus
+  \[
+    \widehat{x}=\frac{0.9443+1.5279}{2}=\boxed{1.2361}.
+  \]
+  Two calls initialize the method; each later reduction needs one new call.
+  Four reductions therefore use \(2+3=\boxed{5}\) evaluations.
+
+  \muted{Check: the exact minimizer \(1.3\) remains inside every retained bracket.}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Pure mathematical problem 3
+% -----------------------------------------------------------------------------
+\begin{frame}{Problem 3: Error budget}
+  A unimodal objective is bracketed on \([2,18]\). After \(k\) golden-section
+  reductions, the midpoint of the surviving bracket will be reported.
+
+  Find the smallest integer \(k\) that guarantees
+  \[
+    |\widehat{x}-x^*|\le 5\times10^{-4}.
+  \]
+
+  Your solution must:
+  \begin{enumerate}
+    \item start from the bracket-length formula;
+    \item verify that one fewer reduction is insufficient;
+    \item convert the result into a function-evaluation budget.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Solution 3: Budget}
+  The initial length is \(L_0=18-2=16\), and after \(k\) reductions
+  \[
+    L_k=16\tau^k,
+    \qquad
+    |\widehat{x}-x^*|\le\frac{L_k}{2}=8\tau^k.
+  \]
+  Therefore
+  \[
+    8\tau^k\le5\times10^{-4}
+    \quad\Longrightarrow\quad
+    k\ge
+    \frac{\ln(6.25\times10^{-5})}{\ln\tau}
+    \approx20.12.
+  \]
+  Thus the smallest integer is \(\boxed{k=21}\).
+
+  The boundary check is
+  \[
+    8\tau^{20}\approx5.289\times10^{-4}>5\times10^{-4},
+    \qquad
+    8\tau^{21}\approx3.269\times10^{-4}<5\times10^{-4}.
+  \]
+
+  With cached reuse, \(k\) reductions require \(k+1\) calls. The guaranteed
+  budget is therefore \(\boxed{22\text{ function evaluations}}\).
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Pure mathematical problem 4
+% -----------------------------------------------------------------------------
+\begin{frame}{Problem 4: Safe discard}
+  Let \(f\) be strictly unimodal with a unique maximum \(x^*\) on
+  \([x_L,x_U]\), and let
+  \[
+    x_L<x_1<x_2<x_U.
+  \]
+
+  Prove directly from strict unimodality that
+  \[
+    f(x_1)<f(x_2)
+    \quad\Longrightarrow\quad
+    x^*\in[x_1,x_U].
+  \]
+
+  Then determine what the equality \(f(x_1)=f(x_2)\) says about the location
+  of \(x^*\).
+
+  \begin{keyidea}[Allowed fact]
+    A strictly unimodal function increases before \(x^*\) and decreases after
+    \(x^*\).
+  \end{keyidea}
+\end{frame}
+
+\begin{frame}{Solution 4: Proof}
+  \golden{Case 1: \(f(x_1)<f(x_2)\).}
+
+  Suppose instead that \(x^*<x_1\). Both probes would then lie on the strictly
+  decreasing side, so
+  \[
+    x^*<x_1<x_2
+    \quad\Longrightarrow\quad
+    f(x_1)>f(x_2),
+  \]
+  a contradiction. Therefore
+  \[
+    \boxed{x^*\in[x_1,x_U]}.
+  \]
+
+  \golden{Case 2: \(f(x_1)=f(x_2)\).}
+
+  If \(x^*\le x_1\), strict decrease gives \(f(x_1)>f(x_2)\). If
+  \(x^*\ge x_2\), strict increase gives \(f(x_1)<f(x_2)\). Both are impossible,
+  hence
+  \[
+    \boxed{x^*\in(x_1,x_2)}.
+  \]
+
+  \muted{A flat-topped objective needs a weaker conclusion about its set of
+  maximizers.}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Pure mathematical problem 5
+% -----------------------------------------------------------------------------
+\begin{frame}{Problem 5: Stopping rule}
+  Consider the relative-width test
+  \[
+    2\left|\frac{x_U-x_L}{x_U+x_L}\right|<\delta.
+  \]
+  It is applied to \([x_L,x_U]=[-0.002,0.002]\) with \(\delta=10^{-3}\).
+
+  \begin{enumerate}
+    \item Explain exactly why the test fails.
+    \item Replace it with a mixed absolute-relative test for the midpoint,
+      using \(\varepsilon_{\rm abs}=10^{-4}\) and
+      \(\varepsilon_{\rm rel}=10^{-3}\).
+    \item Find how many additional golden reductions guarantee the new test.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Solution 5: Scale floor}
+  Here \(x_U+x_L=0\), so the original test is undefined even though the
+  bracket length is \(0.004\). Use
+  \[
+    \frac{L}{2}
+      \le \varepsilon_{\rm abs}
+      +\varepsilon_{\rm rel}\max(|x_L|,|x_U|).
+  \]
+  The present length tolerance is \(2.04\times10^{-4}\). Since the relative
+  scale can fall as the bracket moves, a uniform guarantee uses the absolute
+  floor \(L\le2\times10^{-4}\). With \(L_m=0.004\tau^m\),
+  \[
+    m\ge
+    \frac{\ln(2\times10^{-4}/0.004)}{\ln\tau}
+    \approx6.23,
+    \qquad \boxed{m=7}.
+  \]
+
+  Indeed, \(L_6\approx2.229\times10^{-4}\) fails, while
+  \(L_7\approx1.378\times10^{-4}\) passes. The absolute term prevents the
+  denominator pathology near zero.
+\end{frame}
+
 \section{Application Problems}
 % Five applications; each problem frame is immediately followed by its solution.
 
