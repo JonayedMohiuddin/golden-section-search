@@ -1,4 +1,4 @@
-\documentclass[aspectratio=169,11pt]{beamer}
+\documentclass[aspectratio=169,11pt,t]{beamer}
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -32,7 +32,6 @@
     \item When should we \emph{not} trust the answer?
   \end{enumerate}
 
-  \vspace{0.05cm}
   \begin{keyidea}[The working viewpoint]
     The method does not chase a derivative. It shrinks a bracket that is known
     to contain one optimum.
@@ -86,7 +85,6 @@
         No derivative, quadratic model, or smooth graph is required.
       \end{keyidea}
   \end{columns}
-  \sourceline{Course notes, p.~1; maximization convention retained.}
 \end{frame}
 
 \begin{frame}{The bracket is a claim}
@@ -126,7 +124,6 @@
     \tau=\frac{\sqrt5-1}{2}\approx0.618034,
     \qquad x_L<x_1<x_2<x_U.
   \]
-  \sourceline{Course notes, pp.~1-2. The derivation of \(\tau\) follows in the analysis section.}
 \end{frame}
 
 \begin{frame}{Which side survives?}
@@ -147,7 +144,6 @@
     For a maximum, the larger value points toward the survivor. For a minimum,
     the smaller value does.
   \end{keyidea}
-  \sourceline{The strict-inequality cases follow the update rule in the course notes, pp.~2-3.}
 \end{frame}
 
 \begin{frame}{Reuse one evaluation}
@@ -161,7 +157,6 @@
     \qquad f(x_2')\gets f(x_1).
   \]
   Only \(x_1'\) is new, so only \golden{one new function call} is needed.
-  \sourceline{Course notes, p.~2.}
 \end{frame}
 
 \begin{frame}{Algorithm: initialize once}
@@ -278,7 +273,6 @@
         \tau=\frac{\sqrt5-1}{2}.
       \]
   \end{columns}
-  \sourceline{Course notes, pp.~4-5; Kiefer (1953) formalized finite-budget sequential minimax search.}
 \end{frame}
 
 \begin{frame}{Why the discard is safe}
@@ -402,7 +396,7 @@
 \section{Reliable Computation}
 
 \begin{frame}{Stop safely near zero}
-  The course-note relative test contains \(x_U+x_L\) in the denominator. On a
+  A common relative test contains \(x_U+x_L\) in the denominator. On a
   symmetric bracket such as \([-1,1]\), it divides by zero.
 
   \vspace{0.20cm}
@@ -417,12 +411,12 @@
     \varepsilon_{\rm abs}+\varepsilon_{\rm rel}\max\{|x_L|,|x_U|\}.
   \]
   Also stop on an evaluation budget or when rounding creates no distinct probe.
-  \sourceline{Course notes, p.~3; compare SciPy's absolute \texttt{xatol} and \texttt{maxfun} controls.}
 \end{frame}
 
-\begin{frame}{Implementation guardrails}
+\begin{frame}{Implementation checks}
   \begin{columns}[T,onlytextwidth]
     \column{0.47\textwidth}
+      \raggedright
       \golden{Preserve state}
       \begin{itemize}
         \item move each \((x_i,f_i)\) pair together;
@@ -431,6 +425,7 @@
       \end{itemize}
 
     \column{0.47\textwidth}
+      \raggedright
       \golden{Exit honestly}
       \begin{itemize}
         \item reject NaN or Inf values;
@@ -572,7 +567,6 @@
   For minimization, \(f(x_1)<f(x_2)\) keeps \([x_L,x_2]\); otherwise it keeps
   \([x_1,x_U]\).
 
-  \vspace{0.10cm}
   {\centering
   \fontsize{12.5}{15}\selectfont
   \setlength{\tabcolsep}{3.5pt}
