@@ -258,10 +258,242 @@
 \end{frame}
 
 \section{Convergence and Cost}
-% Invariant, contraction, error bounds, iteration/evaluation complexity.
+
+\begin{frame}{Why does 0.618 appear?}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.56\textwidth}
+      \centering
+      \input{figures/golden-self-similarity.tikz}
+
+    \column{0.41\textwidth}
+      The old \(x_1\) is \((1-\tau)L\) from the left endpoint.
+
+      In the new bracket, the right probe is \(\tau(\tau L)=\tau^2L\)
+      from that endpoint. Reuse requires
+      \[
+        1-\tau=\tau^2.
+      \]
+      Hence
+      \[
+        \tau=\frac{\sqrt5-1}{2}.
+      \]
+  \end{columns}
+  \sourceline{Course notes, pp.~4-5; Kiefer (1953) formalized finite-budget sequential minimax search.}
+\end{frame}
+
+\begin{frame}{Why the discard is safe}
+  Consider maximization with \(x_1<x_2\) and \(f(x_1)>f(x_2)\).
+
+  \vspace{0.22cm}
+  \begin{enumerate}
+    \item Suppose, for contradiction, that \(x^*>x_2\).
+    \item Both probes would then lie on the nondecreasing side of the peak.
+    \item Unimodality would require \(f(x_1)\le f(x_2)\), a contradiction.
+  \end{enumerate}
+
+  \vspace{0.18cm}
+  Therefore \(x^*\le x_2\), so discarding \((x_2,x_U]\) preserves the invariant
+  \[
+    \boxed{x^*\in[x_L,x_U]}.
+  \]
+  The other comparison and minimization cases are symmetric.
+\end{frame}
+
+\begin{frame}{Rate and error guarantee}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+      \golden{Exact contraction}
+      \[
+        L_k=\tau^kL_0.
+      \]
+      For midpoint output,
+      \[
+        |\widehat{x}_k-x^*|\le\frac{L_k}{2}.
+      \]
+
+    \column{0.49\textwidth}
+      \golden{Required reductions}
+      \[
+        k\ge\max\left\{0,\left\lceil
+        \frac{\log(2\varepsilon/L_0)}{\log\tau}
+        \right\rceil\right\}.
+      \]
+      \begin{keyidea}[Example]
+        If \(L_0=5\) and \(\varepsilon=10^{-3}\), then \(k=17\). The actual
+        bound is about \(7.00\times10^{-4}\).
+      \end{keyidea}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{What actually converges?}
+  \golden{Bracket width:} exactly Q-linear,
+  \[
+    \frac{L_{k+1}}{L_k}=\tau.
+  \]
+  \golden{Location estimate:} its guaranteed error is at most \(L_k/2\), also
+  decreasing linearly.
+
+  \vspace{0.18cm}
+  \golden{Objective value:} unimodality alone gives no numerical rate. Extra
+  regularity is needed. For example, if \(f\) is \(M\)-Lipschitz,
+  \[
+    0\le f(x^*)-f(\widehat{x}_k)\le \frac{M L_k}{2}
+  \]
+  for maximization. A smooth stationary optimum can yield an
+  \(O(L_k^2)\) objective error instead.
+\end{frame}
+
+\begin{frame}{Count calls, not loops}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+      \golden{Initialization}
+      \[
+        2\text{ function calls}
+      \]
+      produce the first comparison.
+
+    \column{0.47\textwidth}
+      \golden{Each later comparison}
+      \[
+        1\text{ new function call}
+      \]
+      because one value is reused.
+  \end{columns}
+
+  \vspace{0.22cm}
+  With a stop-after-update implementation,
+  \[
+    n\text{ comparisons}\quad\Longrightarrow\quad n+1\text{ evaluations}.
+  \]
+  For an evaluation budget \(E\ge2\), the worst-case bracket is
+  \[
+    L_{E-1}=\tau^{E-1}L_0.
+  \]
+  \muted{This is why evaluation count is the meaningful complexity measure when
+  \(f\) is a simulation or experiment.}
+\end{frame}
+
+\begin{frame}{Fixed-rule alternatives}
+  \begin{enumerate}
+    \item \golden{Equal-thirds search:} two new calls per comparison; retain
+      \(2/3\) of the bracket.
+    \item \golden{Fibonacci search:} finite-budget minimax optimal; changing
+      ratios require choosing the budget first.
+  \end{enumerate}
+
+  \vspace{0.12cm}
+  \golden{Golden section's compromise:} one stationary ratio, one reused value,
+  and no predetermined final budget.
+  \sourceline{Kiefer, ``Sequential minimax search for a maximum,'' Proc. AMS 4 (1953), 502-506.}
+\end{frame}
+
+\begin{frame}{Brent's hybrid}
+  \begin{itemize}
+    \item Propose an inverse parabolic interpolation step from sampled values.
+    \item Accept it when safe; otherwise take a golden-section step.
+  \end{itemize}
+
+  \vspace{0.14cm}
+  \golden{Trade-off:} golden section gives transparent worst-case contraction.
+  Brent adds bookkeeping to gain speed when the curve is informative.
+  \sourceline{SciPy 1.18 \texttt{minimize\_scalar} documentation; Brent (1973).}
+\end{frame}
 
 \section{Reliable Computation}
-% Robust stopping, floating point, pathologies, comparisons, modern adaptations.
+
+\begin{frame}{Stop safely near zero}
+  The course-note relative test contains \(x_U+x_L\) in the denominator. On a
+  symmetric bracket such as \([-1,1]\), it divides by zero.
+
+  \vspace{0.20cm}
+  For midpoint output, use the scale-aware condition
+  \[
+    L_k\le 2\left(\varepsilon_{\rm abs}
+      +\varepsilon_{\rm rel}\max\{|x_L|,|x_U|\}\right).
+  \]
+  It directly guarantees
+  \[
+    |\widehat{x}_k-x^*|\le
+    \varepsilon_{\rm abs}+\varepsilon_{\rm rel}\max\{|x_L|,|x_U|\}.
+  \]
+  Also stop on an evaluation budget or when rounding creates no distinct probe.
+  \sourceline{Course notes, p.~3; compare SciPy's absolute \texttt{xatol} and \texttt{maxfun} controls.}
+\end{frame}
+
+\begin{frame}{Implementation guardrails}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+      \golden{Preserve state}
+      \begin{itemize}
+        \item move each \((x_i,f_i)\) pair together;
+        \item cache the surviving evaluation;
+        \item assert \(x_L<x_1<x_2<x_U\).
+      \end{itemize}
+
+    \column{0.47\textwidth}
+      \golden{Exit honestly}
+      \begin{itemize}
+        \item reject NaN or Inf values;
+        \item stop if a probe rounds to an endpoint;
+        \item return bracket, status, and call count.
+      \end{itemize}
+  \end{columns}
+
+  \vspace{0.18cm}
+  \muted{Once machine arithmetic cannot create a distinct probe, further
+  interval algebra cannot create new information.}
+\end{frame}
+
+\begin{frame}{How the method misleads}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+      \golden{Several extrema}
+
+      A legal-looking comparison can discard the globally best basin.
+
+      \vspace{0.22cm}
+      \golden{Noisy evaluations}
+
+      One flipped comparison causes an irreversible wrong cut.
+
+      \vspace{0.22cm}
+      \golden{Flat optimum}
+
+      The bracket shrinks, but the optimizer need not be unique.
+
+    \column{0.47\textwidth}
+      \golden{Invalid values}
+
+      NaN, Inf, or domain errors destroy the ordering decision.
+
+      \vspace{0.22cm}
+      \golden{Wrong inequality}
+
+      A minimization update used for maximization walks away from the peak.
+
+      \vspace{0.22cm}
+      \golden{False precision}
+
+      A tiny bracket does not correct model error or measurement bias.
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Modern adaptations}
+  \golden{Line search in many dimensions}
+  \[
+    \phi(\alpha)=F(\mathbf{x}+\alpha\mathbf{d})
+  \]
+  turns one step-length choice into a scalar golden-section problem.
+
+  \golden{Noisy or expensive objectives}
+  \begin{itemize}
+    \item cache results, repeat uncertain comparisons, and enforce a budget;
+    \item stop when noise exceeds the improvement being resolved.
+  \end{itemize}
+
+  \muted{The method is sequential: one new call per step saves evaluations, but
+  the next location must wait. Parallel hardware may favor a batched alternative.}
+\end{frame}
 
 \section{Mathematical Problems}
 % Five problems; each problem frame is immediately followed by its solution.

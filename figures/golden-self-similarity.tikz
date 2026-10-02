@@ -1,0 +1,31 @@
+\begin{tikzpicture}[x=0.67cm,y=1cm]
+  \node[anchor=east,font=\small\bfseries] at (-0.25,1.55) {old};
+  \draw[GSInk,line width=1.3pt] (0,1.55) -- (10,1.55);
+  \foreach \x in {0,3.82,6.18,10}{
+    \draw[GSInk] (\x,1.42) -- (\x,1.68);
+  }
+  \node[above=3pt,font=\small] at (0,1.68) {$x_L$};
+  \node[above=3pt,font=\small] at (3.82,1.68) {$x_1$};
+  \node[above=3pt,font=\small] at (6.18,1.68) {$x_2$};
+  \node[above=3pt,font=\small] at (10,1.68) {$x_U$};
+  \fill[GSGold] (3.82,1.55) circle (2.3pt);
+  \fill[GSGold] (6.18,1.55) circle (2.3pt);
+  \draw[{Latex[length=2mm]}-{Latex[length=2mm]},GSMuted]
+    (0,0.98) -- node[fill=GSCream,inner sep=2pt,font=\small] {$L$} (10,0.98);
+
+  \node[anchor=east,font=\small\bfseries] at (-0.25,-0.15) {new};
+  \draw[GSInk,line width=1.3pt] (0,-0.15) -- (6.18,-0.15);
+  \foreach \x in {0,2.36,3.82,6.18}{
+    \draw[GSInk] (\x,-0.28) -- (\x,-0.02);
+  }
+  \fill[GSCoral] (2.36,-0.15) circle (2.3pt);
+  \fill[GSGold] (3.82,-0.15) circle (2.3pt);
+  \node[below=4pt,font=\small] at (0,-0.28) {$x_L'$};
+  \node[below=4pt,font=\small] at (2.36,-0.28) {$x_1'$};
+  \node[below=4pt,font=\small] at (3.82,-0.28) {$x_2'=x_1$};
+  \node[below=4pt,font=\small] at (6.18,-0.28) {$x_U'$};
+  \draw[{Latex[length=2mm]}-{Latex[length=2mm]},GSGold]
+    (0,-1.10) -- node[fill=GSCream,inner sep=2pt,font=\small] {$\tau L$} (6.18,-1.10);
+  \draw[-{Latex[length=2.4mm]},GSGold,line width=1.1pt]
+    (3.82,1.25) -- node[right,font=\small] {reuse} (3.82,0.18);
+\end{tikzpicture}
