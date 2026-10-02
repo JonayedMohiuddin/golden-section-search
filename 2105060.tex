@@ -378,7 +378,6 @@
   \vspace{0.12cm}
   \golden{Golden section's compromise:} one stationary ratio, one reused value,
   and no predetermined final budget.
-  \sourceline{Kiefer, ``Sequential minimax search for a maximum,'' Proc. AMS 4 (1953), 502-506.}
 \end{frame}
 
 \begin{frame}{Brent's hybrid}
@@ -390,7 +389,6 @@
   \vspace{0.14cm}
   \golden{Trade-off:} golden section gives transparent worst-case contraction.
   Brent adds bookkeeping to gain speed when the curve is informative.
-  \sourceline{SciPy 1.18 \texttt{minimize\_scalar} documentation; Brent (1973).}
 \end{frame}
 
 \section{Reliable Computation}
@@ -970,8 +968,61 @@
   only when their uncertainty intervals overlap.
 \end{frame}
 
-\section{Summary \& References}
-% Final checklist, takeaways, and traceable references.
+\section{Summary}
+% Final checklist and takeaways.
+
+\begin{frame}{Core result}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+      \golden{Geometry}
+      \[
+        \tau=\frac{\sqrt5-1}{2},
+        \qquad
+        L_k=\tau^kL_0.
+      \]
+      If the midpoint is returned,
+      \[
+        |\widehat{x}_k-x^*|\le\frac{L_k}{2}.
+      \]
+      Each comparison retains \(61.8\%\) and discards \(38.2\%\) of the
+      current bracket.
+
+    \column{0.47\textwidth}
+      \golden{Computation}
+      \begin{itemize}
+        \item two calls initialize the search;
+        \item one old value is reused at every later reduction;
+        \item \(k\) reductions cost \(k+1\) function evaluations.
+      \end{itemize}
+  \end{columns}
+
+  \vspace{0.12cm}
+  \muted{The bracket converges Q-linearly. Objective-value accuracy needs
+  additional information about the local shape of \(f\).}
+\end{frame}
+
+\begin{frame}{Use it deliberately}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.47\textwidth}
+      \golden{Use it when}
+      \begin{itemize}\setlength{\itemsep}{0.05cm}
+        \item there is one scalar variable;
+        \item the bracket is plausibly unimodal;
+        \item evaluations are costly and derivatives are unreliable.
+      \end{itemize}
+
+    \column{0.47\textwidth}
+      \golden{Switch when}
+      \begin{itemize}\setlength{\itemsep}{0.05cm}
+        \item interpolation is trustworthy: use Brent's hybrid;
+        \item several extrema require global or multistart search;
+        \item noise or vector decisions require a different solver.
+      \end{itemize}
+  \end{columns}
+
+  \vspace{0.08cm}
+  \muted{Report the bracket, tolerance, call count, and exit status.}
+\end{frame}
 
 \begin{frame}{Project repository}
   \vfill
