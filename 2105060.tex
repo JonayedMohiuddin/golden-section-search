@@ -1,0 +1,67 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{arrows.meta,calc,positioning}
+\pgfplotsset{compat=1.18}
+
+\usepackage{styles/golden-section-theme}
+
+\title{Golden-Section\\Search}
+\subtitle{Derivative-free optimization by interval reduction}
+\author{Jonayed Mohiuddin}
+\date{October 2026}
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+\end{frame}
+
+\begin{frame}{Four questions}
+  \begin{enumerate}
+    \item Why does the constant \(0.618\ldots\) appear?
+    \item How can one function value be reused at every step?
+    \item What accuracy is guaranteed after a fixed budget?
+    \item When should we \emph{not} trust the answer?
+  \end{enumerate}
+
+  \vspace{0.05cm}
+  \begin{keyidea}[The working viewpoint]
+    The method does not chase a derivative. It shrinks a bracket that is known
+    to contain one optimum.
+  \end{keyidea}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Teaching module. Content frames will be added one stage at a time.
+% -----------------------------------------------------------------------------
+
+\section{Problem Setting}
+% Unimodality, a valid initial bracket, and maximization/minimization notation.
+
+\section{The Search Mechanism}
+% Probe placement, decision rules, ratio derivation, pseudocode, iteration trace.
+
+\section{Convergence and Cost}
+% Invariant, contraction, error bounds, iteration/evaluation complexity.
+
+\section{Reliable Computation}
+% Robust stopping, floating point, pathologies, comparisons, modern adaptations.
+
+\section{Mathematical Problems}
+% Five problems; each problem frame is immediately followed by its solution.
+
+\section{Application Problems}
+% Five applications; each problem frame is immediately followed by its solution.
+
+\section{Summary \& References}
+% Final checklist, takeaways, and traceable references.
+
+\end{document}

@@ -15,3 +15,6 @@
 
 # Generated submission archive (built only at the final stage)
 2105060_LaTeX_Source.zip
+
+# Local render-and-inspection output
+tmp/

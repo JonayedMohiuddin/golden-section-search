@@ -1,0 +1,135 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{styles/golden-section-theme}[2026/10/02 Golden-section Beamer style]
+
+% Palette: warm paper, dark ink, and one restrained gold accent.
+\definecolor{GSCream}{HTML}{F7F3EA}
+\definecolor{GSInk}{HTML}{17233B}
+\definecolor{GSGold}{HTML}{B78A22}
+\definecolor{GSMuted}{HTML}{667085}
+\definecolor{GSPaleGold}{HTML}{EFE3C2}
+\definecolor{GSCoral}{HTML}{A95043}
+
+\mode<presentation>
+
+\usefonttheme{professionalfonts}
+\setbeamercolor{normal text}{fg=GSInk,bg=GSCream}
+\setbeamercolor{structure}{fg=GSGold}
+\setbeamercolor{alerted text}{fg=GSCoral}
+\setbeamercolor{frametitle}{fg=GSInk,bg=GSCream}
+\setbeamercolor{title}{fg=GSInk}
+\setbeamercolor{subtitle}{fg=GSMuted}
+\setbeamercolor{author}{fg=GSInk}
+\setbeamercolor{date}{fg=GSMuted}
+\setbeamercolor{section in toc}{fg=GSInk}
+\setbeamercolor{subsection in toc}{fg=GSMuted}
+\setbeamercolor{block title}{fg=GSInk,bg=GSPaleGold}
+\setbeamercolor{block body}{fg=GSInk,bg=white}
+
+\setbeamerfont{title}{series=\bfseries,size=\fontsize{50}{52}}
+\setbeamerfont{subtitle}{size=\fontsize{18}{22}}
+\setbeamerfont{author}{series=\bfseries,size=\fontsize{18}{22}}
+\setbeamerfont{date}{size=\fontsize{14}{18}}
+\setbeamerfont{frametitle}{series=\bfseries,size=\fontsize{35}{39}}
+\setbeamerfont{normal text}{size=\fontsize{16}{20}}
+\setbeamerfont{itemize/enumerate body}{size=\fontsize{16}{20}}
+\setbeamerfont{itemize/enumerate subbody}{size=\fontsize{14}{18}}
+\setbeamerfont{block title}{series=\bfseries,size=\fontsize{18}{22}}
+\setbeamerfont{block body}{size=\fontsize{16}{20}}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{itemize item}{\raise0.2ex\hbox{\color{GSGold}\scriptsize$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{\raise0.15ex\hbox{\color{GSGold}\tiny$\bullet$}}
+\setbeamertemplate{enumerate item}{%
+  \tikz[baseline=(n.base)]\node[fill=GSGold,text=white,circle,
+    minimum size=1.6em,inner sep=0pt,font=\bfseries\small] (n) {\insertenumlabel};}
+
+% Large title with a small gold rule below it.
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=1.15cm,dp=0.20cm,
+    leftskip=0.72cm,rightskip=0.72cm]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}%
+  \hspace*{0.72cm}\color{GSGold}\rule{1.05cm}{1.4pt}%
+}
+
+% Footer kept quiet so the mathematics remains the visual focus.
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox{%
+    \begin{beamercolorbox}[wd=.34\paperwidth,ht=0.34cm,dp=0.17cm,
+      leftskip=0.72cm]{normal text}%
+      \color{GSMuted}\fontsize{8.5}{10}\selectfont Jonayed Mohiuddin \enspace|\enspace 2105060
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.48\paperwidth,ht=0.34cm,dp=0.17cm,
+      center]{normal text}%
+      \color{GSMuted}\fontsize{8.5}{10}\selectfont Golden-Section Search
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.18\paperwidth,ht=0.34cm,dp=0.17cm,
+      rightskip=0.72cm plus 1fil]{normal text}%
+      \hfill\color{GSMuted}\fontsize{8.5}{10}\selectfont
+      \insertframenumber\,/\,\inserttotalframenumber
+    \end{beamercolorbox}%
+  }
+}
+
+\setbeamersize{text margin left=0.72cm,text margin right=0.72cm}
+
+% A deliberately minimal title page rather than a collection of panels.
+\setbeamertemplate{title page}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[GSGold] (current page.north west)
+      rectangle ([xshift=0.18cm]current page.south west);
+    \fill[GSPaleGold] ([xshift=-2.15cm]current page.north east)
+      rectangle (current page.north east);
+    \draw[GSGold,line width=1.5pt]
+      ([xshift=0.82cm,yshift=-2.03cm]current page.north west) --
+      ([xshift=4.2cm,yshift=-2.03cm]current page.north west);
+  \end{tikzpicture}
+  \vspace*{0.20cm}
+  {\color{GSGold}\fontsize{14}{18}\selectfont\bfseries
+    CSE 401 \enspace/\enspace NUMERICAL ANALYSIS AND SIMULATION\par}
+  \vspace{0.92cm}
+  {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+  \vspace{0.25cm}
+  {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+  \vfill
+  {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
+  \vspace{0.10cm}
+  {\color{GSMuted}\fontsize{14}{18}\selectfont Student ID: 2105060\par}
+  \vspace{0.32cm}
+  {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
+}
+
+% Reusable section divider. Section number remains visible but secondary.
+\AtBeginSection[]{%
+  \setbeamercolor{background canvas}{bg=GSInk}
+  \begin{frame}[plain]
+    \vspace*{0.12cm}
+    {\color{GSGold}\fontsize{15}{18}\selectfont\bfseries
+      SECTION \insertsectionnumber\par}
+    \vspace{0.24cm}
+    {\color{GSGold}\rule{3.10cm}{1.5pt}\par}
+    \vspace{0.70cm}
+    {\color{white}\fontsize{36}{42}\selectfont\bfseries
+      \insertsectionhead\par}
+    \vfill
+    {\color{white!62}\fontsize{13}{17}\selectfont
+      Golden-Section Search \enspace|\enspace Jonayed Mohiuddin\par}
+    \vspace*{0.18cm}
+  \end{frame}
+  \setbeamercolor{background canvas}{bg=GSCream}
+}
+
+% Small semantic helpers for later teaching and solution frames.
+\newcommand{\golden}[1]{\textcolor{GSGold}{\textbf{#1}}}
+\newcommand{\muted}[1]{\textcolor{GSMuted}{#1}}
+\newcommand{\sourceline}[1]{%
+  \par\vspace{0.15cm}{\color{GSMuted}\fontsize{8.5}{10}\selectfont Source: #1}}
+
+\newenvironment{keyidea}[1][Key idea]
+  {\begin{block}{#1}}
+  {\end{block}}
+
+\mode<all>
