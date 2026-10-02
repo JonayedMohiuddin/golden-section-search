@@ -739,6 +739,237 @@
 \section{Application Problems}
 % Five applications; each problem frame is immediately followed by its solution.
 
+% -----------------------------------------------------------------------------
+% Real-life application problem 1
+% -----------------------------------------------------------------------------
+\begin{frame}{Application 1: Damper}
+  A suspension engineer tunes a dimensionless damping setting \(c\). A
+  finite-element run predicts the peak displacement
+  \[
+    D(c)=1.5+12(c-0.38)^2\ \text{mm},
+    \qquad 0.10\le c\le0.90.
+  \]
+  The engineer treats the simulator as a black box and minimizes \(D\) using
+  golden-section search. One run takes \(8\) minutes.
+
+  \begin{enumerate}
+    \item Carry out the first three bracket reductions.
+    \item Report the final bracket and its midpoint.
+    \item Find the total simulation time when values are cached.
+  \end{enumerate}
+
+  \muted{The formula is supplied so that the simulator outputs can be checked by hand.}
+\end{frame}
+
+\begin{frame}{Solution 1: Damper result}
+  For minimization, retain the side containing the smaller displacement.
+
+  \vspace{0.08cm}
+  {\centering
+  \fontsize{12.5}{15}\selectfont
+  \setlength{\tabcolsep}{4.0pt}
+  \begin{tabular}{c r r r r l}
+    \toprule
+    \(k\) & \(c_1\) & \(c_2\) & \(D(c_1)\) & \(D(c_2)\) & retained bracket \\
+    \midrule
+    1 & 0.4056 & 0.5944 & 1.5078 & 2.0517 & \([0.1000,\,0.5944]\) \\
+    2 & 0.2889 & 0.4056 & 1.5997 & 1.5078 & \([0.2889,\,0.5944]\) \\
+    3 & 0.4056 & 0.4777 & 1.5078 & 1.6146 & \([0.2889,\,0.4777]\) \\
+    \bottomrule
+  \end{tabular}\par}
+
+  \vspace{0.16cm}
+  Hence
+  \[
+    c\in[0.2889,0.4777],
+    \qquad \widehat c=\frac{0.2889+0.4777}{2}=\boxed{0.3833}.
+  \]
+  Three reductions need \(3+1=4\) cached evaluations, so the elapsed simulation
+  time is \(4(8)=\boxed{32\text{ minutes}}\).
+
+  \muted{Audit: the model's exact best setting, \(c=0.38\), is inside the bracket.}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Real-life application problem 2
+% -----------------------------------------------------------------------------
+\begin{frame}{Application 2: Insulation}
+  A building model balances insulation cost against heat loss:
+  \[
+    C(t)=180t+100e^{-10t},
+    \qquad 0.02\le t\le0.32,
+  \]
+  where \(t\) is thickness in metres and \(C\) is annual cost in thousands of
+  taka. One energy-model run takes \(45\) seconds.
+
+  Use golden-section search to guarantee a midpoint thickness error of at most
+  \(1\) mm.
+
+  \begin{enumerate}
+    \item Determine the required reductions and model calls.
+    \item Convert the call count into elapsed time.
+    \item Report the computed bracket and midpoint thickness.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Solution 2: Result}
+  Here \(L_0=0.32-0.02=0.30\) m. The midpoint guarantee requires
+  \[
+    \frac{0.30\tau^k}{2}\le0.001
+    \quad\Longrightarrow\quad
+    k\ge\frac{\ln(0.001/0.15)}{\ln\tau}\approx10.41.
+  \]
+  Thus \(\boxed{k=11}\) reductions and \(\boxed{12}\) model calls are needed.
+  The corresponding time is
+  \[
+    12(45)=540\text{ s}=\boxed{9\text{ minutes}}.
+  \]
+
+  Running the updates gives
+  \[
+    [t_L,t_U]=[0.170466,0.171973]\ \text{m},
+    \qquad \widehat t=0.171220\ \text{m}=\boxed{171.2\text{ mm}}.
+  \]
+
+  \muted{Independent audit: \(C'(t)=0\) gives
+  \(t^*=\ln(1000/180)/10=0.171480\) m, which lies in the bracket.}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Real-life application problem 3
+% -----------------------------------------------------------------------------
+\begin{frame}{Application 3: Dosage}
+  A dose-response surrogate assigns the net clinical benefit
+  \[
+    B(d)=95-0.12(d-14)^2,
+    \qquad 5\le d\le25,
+  \]
+  where \(d\) is a dose in milligrams. The approved interval is unimodal, and
+  the benefit must be maximized without using derivatives.
+
+  The design requirement is stated in outcome units:
+  \[
+    B(d^*)-B(\widehat d)\le0.05\ \text{benefit points}.
+  \]
+
+  Find the smallest guaranteed reduction count, the evaluation count, and the
+  midpoint recommendation produced by golden-section search.
+\end{frame}
+
+\begin{frame}{Solution 3: Benefit bound}
+  After \(k\) reductions, the midpoint error obeys
+  \[
+    |\widehat d-d^*|\le10\tau^k
+    \quad\Longrightarrow\quad
+    B(d^*)-B(\widehat d)\le0.12(10\tau^k)^2.
+  \]
+  Requiring this bound to be at most \(0.05\) gives
+  \[
+    0.12(10\tau^k)^2\le0.05
+    \quad\Longrightarrow\quad k\ge5.69.
+  \]
+  Therefore \(\boxed{k=6}\), requiring \(\boxed{7}\) benefit evaluations.
+
+  The boundary check is \(0.0976>0.05\) at \(k=5\), but
+  \(0.0373<0.05\) at \(k=6\).
+  Six updates give \([13.3282,14.4427]\) mg, so
+  \[
+    \boxed{\widehat d=13.8854\text{ mg}}.
+  \]
+  \muted{Its actual model loss is only \(0.0016\); \(0.0373\) is the advance guarantee.}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Real-life application problem 4
+% -----------------------------------------------------------------------------
+\begin{frame}{Application 4: Pricing}
+  A retailer tests price \(p\), measured in hundreds of taka. A demand simulator
+  predicts weekly profit, in thousands of taka, as
+  \[
+    \Pi(p)=12(p-8)e^{-0.06p},
+    \qquad 10\le p\le40.
+  \]
+  Each simulator call takes \(20\) minutes.
+
+  \begin{enumerate}
+    \item Compute the initial golden probes and their profits.
+    \item Perform the first maximization update and identify the reused point.
+    \item For eight reductions, compare cached golden search with an
+      implementation that evaluates two probes every time.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Solution 4: Reuse pays}
+  The initial probes and profits are
+  \[
+    p_1=21.4590,\quad \Pi(p_1)=44.568,
+    \qquad
+    p_2=28.5410,\quad \Pi(p_2)=44.472.
+  \]
+  Since \(\Pi(p_1)>\Pi(p_2)\), maximization retains
+  \[
+    \boxed{[10,28.5410]}.
+  \]
+  The old \(p_1=21.4590\) becomes the new right probe; only the new left probe
+  \[
+    p_1'=28.5410-\tau(28.5410-10)=17.0820
+  \]
+  needs evaluation.
+
+  For eight reductions,
+  \[
+    \text{cached calls}=8+1=9,
+    \qquad
+    \text{two fresh probes each time}=16.
+  \]
+  Reuse saves \(7\) calls, or \(7(20)=\boxed{140\text{ minutes}}\).
+\end{frame}
+
+% -----------------------------------------------------------------------------
+% Real-life application problem 5
+% -----------------------------------------------------------------------------
+\begin{frame}{Application 5: Solar tilt}
+  A solar-field simulation maximizes daily energy over
+  \(10^\circ\le\theta\le50^\circ\). The first golden probes are
+  \[
+    \theta_1=25.279^\circ,
+    \qquad \theta_2=34.721^\circ.
+  \]
+  Weather variability produces these 95\% intervals, in kWh:
+  \[
+    \theta_1: 5.84\pm0.06,
+    \qquad
+    \theta_2: 5.88\pm0.06.
+  \]
+  After replication they narrow to \([5.82,5.86]\) and \([5.87,5.91]\).
+
+  Explain the correct decision before and after replication, find the next new
+  probe, and calculate the cost of five runs per probe at two minutes per run.
+\end{frame}
+
+\begin{frame}{Solution 5}
+  Initially the intervals overlap, so the sign of
+  \(E(\theta_2)-E(\theta_1)\) is unresolved. A standard golden-section discard
+  would risk deleting the true maximum.
+
+  After replication,
+  \[
+    [5.82,5.86]\cap[5.87,5.91]=\varnothing,
+  \]
+  and the second probe is reliably better. For maximization, retain
+  \[
+    \boxed{[25.279^\circ,50^\circ]}.
+  \]
+  The old \(34.721^\circ\) point becomes the new left probe. The new right probe is
+  \[
+    25.279+\tau(50-25.279)=\boxed{40.557^\circ}.
+  \]
+
+  Five runs at each original probe require \(10\) runs, costing
+  \(10(2)=\boxed{20\text{ minutes}}\). Later comparisons should also replicate
+  only when their uncertainty intervals overlap.
+\end{frame}
+
 \section{Summary \& References}
 % Final checklist, takeaways, and traceable references.
 
