@@ -26,10 +26,12 @@
       (axis cs:3.09017,5.4) -- (axis cs:3.09017,11.52367);
     \addplot[GSGold,only marks,mark=*,mark size=2.7pt]
       coordinates {(1.90983,11.75973) (3.09017,11.52367)};
-    \node[font=\scriptsize,anchor=south east] at (axis cs:1.90983,11.75973)
-      {$11.7597$};
-    \node[font=\scriptsize,anchor=north west] at (axis cs:3.09017,11.52367)
-      {$11.5237$};
+    \node[font=\scriptsize,anchor=north,yshift=-5pt,
+      fill=GSCream,fill opacity=0.94,text opacity=1,inner sep=1.4pt]
+      at (axis cs:1.90983,11.75973) {$11.7597$};
+    \node[font=\scriptsize,anchor=north,yshift=-5pt,
+      fill=GSCream,fill opacity=0.94,text opacity=1,inner sep=1.4pt]
+      at (axis cs:3.09017,11.52367) {$11.5237$};
     \node[GSCoral,font=\small\bfseries] at (axis cs:4.13,7.0) {discard};
   \end{axis}
 \end{tikzpicture}
