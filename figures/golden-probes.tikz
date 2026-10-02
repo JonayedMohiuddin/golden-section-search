@@ -1,0 +1,16 @@
+\begin{tikzpicture}[x=1.08cm,y=1cm]
+  \draw[GSInk,line width=1.4pt] (0,0) -- (10,0);
+  \foreach \x/\lab in {0/x_L,3.82/x_1,6.18/x_2,10/x_U}{
+    \draw[GSInk,line width=1.1pt] (\x,-0.13) -- (\x,0.13);
+    \node[below=5pt,font=\small] at (\x,0) {$\lab$};
+  }
+  \fill[GSGold] (3.82,0) circle (2.4pt);
+  \fill[GSGold] (6.18,0) circle (2.4pt);
+
+  \draw[{Latex[length=2mm]}-{Latex[length=2mm]},GSMuted]
+    (0,0.70) -- node[fill=GSCream,inner sep=2pt,font=\small] {$L=x_U-x_L$} (10,0.70);
+  \draw[{Latex[length=2mm]}-{Latex[length=2mm]},GSGold]
+    (0,-0.95) -- node[fill=GSCream,inner sep=2pt,font=\small] {$\tau L$} (6.18,-0.95);
+  \draw[{Latex[length=2mm]}-{Latex[length=2mm]},GSGold]
+    (3.82,-1.48) -- node[fill=GSCream,inner sep=2pt,font=\small] {$\tau L$} (10,-1.48);
+\end{tikzpicture}

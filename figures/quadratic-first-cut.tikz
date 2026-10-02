@@ -1,0 +1,35 @@
+\begin{tikzpicture}
+  \begin{axis}[
+    width=8.2cm,
+    height=5.15cm,
+    axis lines=left,
+    xmin=0, xmax=5.15,
+    ymin=5.4, ymax=12.6,
+    xtick={0,1.91,2.4,3.09,5},
+    xticklabels={$x_L$,$x_1$,$x^*$,$x_2$,$x_U$},
+    ytick=\empty,
+    xlabel={$x$},
+    ylabel={$f(x)$},
+    label style={font=\small},
+    tick label style={font=\scriptsize},
+    every axis plot/.append style={line width=1.35pt},
+    clip=false
+  ]
+    \addplot[draw=none,fill=GSCoral!14]
+      coordinates {(3.09017,5.4) (5,5.4) (5,12.6) (3.09017,12.6)}
+      \closedcycle;
+    \addplot[GSInk,domain=0:5,samples=100]
+      {12-(x-2.4)^2};
+    \draw[GSGold,densely dashed]
+      (axis cs:1.90983,5.4) -- (axis cs:1.90983,11.75973);
+    \draw[GSGold,densely dashed]
+      (axis cs:3.09017,5.4) -- (axis cs:3.09017,11.52367);
+    \addplot[GSGold,only marks,mark=*,mark size=2.7pt]
+      coordinates {(1.90983,11.75973) (3.09017,11.52367)};
+    \node[font=\scriptsize,anchor=south east] at (axis cs:1.90983,11.75973)
+      {$11.7597$};
+    \node[font=\scriptsize,anchor=north west] at (axis cs:3.09017,11.52367)
+      {$11.5237$};
+    \node[GSCoral,font=\small\bfseries] at (axis cs:4.13,7.0) {discard};
+  \end{axis}
+\end{tikzpicture}

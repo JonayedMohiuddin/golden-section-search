@@ -1,0 +1,26 @@
+\begin{tikzpicture}[x=0.91cm,y=1cm]
+  % Old bracket and probe points.
+  \node[anchor=east,font=\small\bfseries,GSInk] at (-0.25,1.55) {before};
+  \draw[GSInk,line width=1.3pt] (0,1.55) -- (10,1.55);
+  \foreach \x/\lab in {0/x_L,3.82/x_1,6.18/x_2,10/x_U}{
+    \draw[GSInk] (\x,1.43) -- (\x,1.67);
+    \node[above=3pt,font=\small] at (\x,1.67) {$\lab$};
+  }
+  \fill[GSGold] (3.82,1.55) circle (2.4pt);
+  \fill[GSGold] (6.18,1.55) circle (2.4pt);
+  \draw[GSCoral,line width=3.5pt,opacity=.62] (6.18,1.55) -- (10,1.55);
+  \node[GSCoral,font=\small,anchor=west] at (7.0,1.08) {discard};
+
+  % New bracket after f(x_1) > f(x_2) for maximization.
+  \node[anchor=east,font=\small\bfseries,GSInk] at (-0.25,-0.25) {after};
+  \draw[GSInk,line width=1.3pt] (0,-0.25) -- (6.18,-0.25);
+  \foreach \x/\lab in {0/x_L,2.36/x_1',3.82/x_2',6.18/x_U'}{
+    \draw[GSInk] (\x,-0.37) -- (\x,-0.13);
+    \node[below=4pt,font=\small] at (\x,-0.37) {$\lab$};
+  }
+  \fill[GSCoral] (2.36,-0.25) circle (2.4pt);
+  \fill[GSGold] (3.82,-0.25) circle (2.4pt);
+  \draw[-{Latex[length=2.4mm]},GSGold,line width=1.1pt]
+    (3.82,1.23) -- node[right,font=\small,align=left] {same point,\\same value} (3.82,0.06);
+  \node[GSCoral,font=\small,anchor=west] at (2.55,-0.92) {one new call};
+\end{tikzpicture}

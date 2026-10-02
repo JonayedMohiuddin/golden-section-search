@@ -44,10 +44,218 @@
 % -----------------------------------------------------------------------------
 
 \section{Problem Setting}
-% Unimodality, a valid initial bracket, and maximization/minimization notation.
+
+\begin{frame}{A derivative-free question}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.48\textwidth}
+      {\fontsize{22}{27}\selectfont
+      \[
+        x^*=\underset{x\in[x_L,x_U]}{\operatorname{arg\,max}}\; f(x)
+      \]
+      }
+      \golden{Only request:} values of \(f(x)\).
+
+      \vspace{0.20cm}
+      A reliable derivative may be unavailable, expensive, or meaningless.
+
+    \column{0.47\textwidth}
+      \golden{Typical situations}
+      \begin{itemize}
+        \item laboratory measurements;
+        \item simulation runs;
+        \item noisy or tabulated output.
+      \end{itemize}
+      \muted{For minimization, replace \(\operatorname{arg\,max}\) by
+      \(\operatorname{arg\,min}\); the geometry is unchanged.}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{The unimodality contract}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.48\textwidth}
+      \centering
+      \input{figures/unimodal-maximum.tikz}
+
+    \column{0.47\textwidth}
+      A maximum at \(x^*\) divides the bracket:
+      \begin{itemize}
+        \item \(f\) is nondecreasing up to \(x^*\);
+        \item \(f\) is nonincreasing after \(x^*\).
+      \end{itemize}
+      \begin{keyidea}[What is not required]
+        No derivative, quadratic model, or smooth graph is required.
+      \end{keyidea}
+  \end{columns}
+  \sourceline{Course notes, p.~1; maximization convention retained.}
+\end{frame}
+
+\begin{frame}{The bracket is a claim}
+  \begin{enumerate}
+    \item \golden{Valid domain:} every trial point is safe to evaluate.
+    \item \golden{Contains the target:} the desired optimum is inside.
+    \item \golden{One relevant mode:} one peak or trough governs the interval.
+  \end{enumerate}
+
+  \vspace{0.08cm}
+  \begin{keyidea}[Why this matters]
+    The method certifies a smaller \emph{interval}; it cannot repair a bracket
+    that excluded the optimum or mixed several extrema.
+  \end{keyidea}
+\end{frame}
 
 \section{The Search Mechanism}
-% Probe placement, decision rules, ratio derivation, pseudocode, iteration trace.
+
+\begin{frame}{Two probes, one bracket}
+  \centering
+  \vspace{0.10cm}
+  \input{figures/golden-probes.tikz}
+
+  \vspace{0.45cm}
+  \begin{columns}[T,onlytextwidth]
+    \column{0.46\textwidth}
+      \[
+        x_1=x_U-\tau L
+      \]
+    \column{0.46\textwidth}
+      \[
+        x_2=x_L+\tau L
+      \]
+  \end{columns}
+  \vspace{-0.08cm}
+  \[
+    \tau=\frac{\sqrt5-1}{2}\approx0.618034,
+    \qquad x_L<x_1<x_2<x_U.
+  \]
+  \sourceline{Course notes, pp.~1-2. The derivation of \(\tau\) follows in the analysis section.}
+\end{frame}
+
+\begin{frame}{Which side survives?}
+  \renewcommand{\arraystretch}{1.24}
+  \centering
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    Comparison & Maximization keeps & Minimization keeps \\
+    \midrule
+    \(f(x_1)>f(x_2)\) & \([x_L,x_2]\) & \([x_1,x_U]\) \\
+    \(f(x_1)<f(x_2)\) & \([x_1,x_U]\) & \([x_L,x_2]\) \\
+    \(f(x_1)=f(x_2)\) & \([x_1,x_2]\) & \([x_1,x_2]\) \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.14cm}
+  \begin{keyidea}[Read one row, not the whole table]
+    For a maximum, the larger value points toward the survivor. For a minimum,
+    the smaller value does.
+  \end{keyidea}
+  \sourceline{The strict-inequality cases follow the update rule in the course notes, pp.~2-3.}
+\end{frame}
+
+\begin{frame}{Reuse one evaluation}
+  \centering
+  \input{figures/point-reuse.tikz}
+
+  \vspace{0.24cm}
+  For the illustrated maximization case, \(f(x_1)>f(x_2)\). Therefore
+  \[
+    x_U'\gets x_2, \qquad x_2'\gets x_1,
+    \qquad f(x_2')\gets f(x_1).
+  \]
+  Only \(x_1'\) is new, so only \golden{one new function call} is needed.
+  \sourceline{Course notes, p.~2.}
+\end{frame}
+
+\begin{frame}{Algorithm: initialize once}
+  \begin{enumerate}
+    \item Set \(\tau=(\sqrt5-1)/2\) and \(L=x_U-x_L\).
+    \item Form \(x_1=x_U-\tau L\) and \(x_2=x_L+\tau L\).
+    \item Evaluate \(f_1=f(x_1)\) and \(f_2=f(x_2)\).
+  \end{enumerate}
+
+  \vspace{0.18cm}
+  \begin{keyidea}[State carried into the loop]
+    Keep the ordered endpoints, two probes, and their two function values.
+    Losing a saved value also loses the main efficiency advantage.
+  \end{keyidea}
+\end{frame}
+
+\begin{frame}{Algorithm: repeat}
+  \begin{enumerate}
+    \item Compare \(f_1\) and \(f_2\).
+    \item Discard the side ruled out by unimodality.
+    \item Rename the surviving probe and reuse its value.
+    \item Create one new probe and evaluate \(f\) there.
+    \item Stop when the bracket meets the accuracy rule.
+  \end{enumerate}
+
+  \vspace{0.10cm}
+  \muted{For minimization, reverse only the two strict comparison decisions;
+  the probe geometry and reuse are unchanged.}
+\end{frame}
+
+\begin{frame}{Worked trace: first cut}
+  \begin{columns}[c,onlytextwidth]
+    \column{0.58\textwidth}
+      \centering
+      \input{figures/quadratic-first-cut.tikz}
+
+    \column{0.39\textwidth}
+      Maximize
+      \[
+        f(x)=12-(x-2.4)^2
+      \]
+      on \([0,5]\).
+
+      \vspace{0.12cm}
+      \[
+        x_1=1.90983,\qquad x_2=3.09017.
+      \]
+      Since
+      \[
+        f(x_1)>f(x_2),
+      \]
+      retain \(\golden{[0,3.09017]}\).
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Worked trace: cuts 0-2}
+  \renewcommand{\arraystretch}{1.34}
+  \centering
+  \begin{tabular}{@{}clllc@{}}
+    \toprule
+    \(k\) & Bracket before & \(x_1\) & \(x_2\) & Retained bracket \\
+    \midrule
+    0 & \([0,5]\) & 1.90983 & 3.09017 & \([0,3.09017]\) \\
+    1 & \([0,3.09017]\) & 1.18034 & \golden{1.90983} & \([1.18034,3.09017]\) \\
+    2 & \([1.18034,3.09017]\) & \golden{1.90983} & 2.36068 & \([1.90983,3.09017]\) \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.36cm}
+  \begin{keyidea}[Watch the gold entry]
+    It moves to the other probe column because the physical point and its
+    function value are reused.
+  \end{keyidea}
+\end{frame}
+
+\begin{frame}{Worked trace: cuts 3-5}
+  \renewcommand{\arraystretch}{1.34}
+  \centering
+  \begin{tabular}{@{}clllc@{}}
+    \toprule
+    \(k\) & Bracket before & \(x_1\) & \(x_2\) & Retained bracket \\
+    \midrule
+    3 & \([1.90983,3.09017]\) & \golden{2.36068} & 2.63932 & \([1.90983,2.63932]\) \\
+    4 & \([1.90983,2.63932]\) & 2.18847 & \golden{2.36068} & \([2.18847,2.63932]\) \\
+    5 & \([2.18847,2.63932]\) & \golden{2.36068} & 2.46711 & \([2.18847,2.46711]\) \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.36cm}
+  \begin{keyidea}[Result after six comparisons]
+    The true maximizer \(x^*=2.4\) remains inside
+    \([2.18847,2.46711]\), now only \(0.27864\) wide.
+  \end{keyidea}
+\end{frame}
 
 \section{Convergence and Cost}
 % Invariant, contraction, error bounds, iteration/evaluation complexity.
